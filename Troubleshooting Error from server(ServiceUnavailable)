@@ -1,0 +1,122 @@
+  1 # Please edit the object below. Lines beginning with a '#' will be ignored,
+  2 # and an empty file will abort the edit. If an error occurs while saving this file will be
+  3 # reopened with the relevant failures.
+  4 #
+  5 apiVersion: apps/v1
+  6 kind: Deployment
+  7 metadata:
+  8   annotations:
+  9     deployment.kubernetes.io/revision: "2"
+ 10   creationTimestamp: "2023-04-10T05:15:31Z"
+ 11   generation: 2
+ 12   labels:
+ 13     k8s-app: metrics-server
+ 14   name: metrics-server
+ 15   namespace: kube-system
+ 16   resourceVersion: "861846"
+ 17   uid: e59374e3-5949-444f-b410-4d76cbf6068a
+ 18 spec:
+ 19   progressDeadlineSeconds: 600
+ 20   replicas: 1
+ 21   revisionHistoryLimit: 10
+ 22   selector:
+ 23     matchLabels:
+ 24       k8s-app: metrics-server
+ 25   strategy:
+ 26     rollingUpdate:
+ 27       maxSurge: 25%
+ 28       maxUnavailable: 0
+ 29     type: RollingUpdate
+ 30   template:
+ 31     metadata:
+ 32       creationTimestamp: null
+ 33       labels:
+ 34         k8s-app: metrics-server
+ 35     spec:
+ 36       containers:
+ 37       - args:
+ 38         - --cert-dir=/tmp
+ 39         - --secure-port=4443
+ 40         - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+ 41         - --kubelet-use-node-status-port
+ 42         - --metric-resolution=15s
+ 43         - --kubelet-insecure-tls=true
+ 44         image: registry.k8s.io/metrics-server/metrics-server:v0.6.3
+ 45         imagePullPolicy: IfNotPresent
+ 46         livenessProbe:
+ 47           failureThreshold: 3
+ 48           httpGet:
+ 49             path: /livez
+ 50             port: https
+ 51             scheme: HTTPS
+ 52           periodSeconds: 10
+ 53           successThreshold: 1
+ 54           timeoutSeconds: 1
+ 55         name: metrics-server
+ 56         ports:
+ 57         - containerPort: 4443
+ 58           hostPort: 4443
+ 59           name: https
+ 60           protocol: TCP
+ 61         readinessProbe:
+ 62           failureThreshold: 3
+ 63           httpGet:
+ 64             path: /readyz
+ 65             port: https
+ 66             scheme: HTTPS
+ 67           initialDelaySeconds: 20
+ 68           periodSeconds: 10
+ 69           successThreshold: 1
+ 70           timeoutSeconds: 1
+ 71         resources:
+ 72           requests:
+ 73             cpu: 100m
+ 74             memory: 200Mi
+ 75         securityContext:
+ 76           allowPrivilegeEscalation: false
+ 77           readOnlyRootFilesystem: true
+ 78           runAsNonRoot: true
+ 79           runAsUser: 1000
+ 80         terminationMessagePath: /dev/termination-log
+ 81         terminationMessagePolicy: File
+ 82         volumeMounts:
+ 83         - mountPath: /tmp
+ 84           name: tmp-dir
+ 85       dnsPolicy: ClusterFirst
+ 86       hostNetwork: true
+ 87       nodeSelector:
+ 88         kubernetes.io/os: linux
+ 89       priorityClassName: system-cluster-critical
+ 90       restartPolicy: Always
+ 91       schedulerName: default-scheduler
+ 92       securityContext: {}
+ 93       serviceAccount: metrics-server
+ 94       serviceAccountName: metrics-server
+ 95       terminationGracePeriodSeconds: 30
+ 96       tolerations:
+ 97       - effect: NoSchedule
+ 98         key: middleware
+ 99         operator: Equal
+100         value: present
+101       volumes:
+102       - emptyDir: {}
+103         name: tmp-dir
+104 status:
+105   availableReplicas: 1
+106   conditions:
+107   - lastTransitionTime: "2023-04-10T05:16:01Z"
+108     lastUpdateTime: "2023-04-10T05:16:01Z"
+109     message: Deployment has minimum availability.
+110     reason: MinimumReplicasAvailable
+111     status: "True"
+112     type: Available
+113   - lastTransitionTime: "2023-04-10T05:15:31Z"
+114     lastUpdateTime: "2023-04-10T05:26:27Z"
+115     message: ReplicaSet "metrics-server-b64dfd7f7" has successfully progressed.
+116     reason: NewReplicaSetAvailable
+117     status: "True"
+118     type: Progressing
+119   observedGeneration: 2
+120   readyReplicas: 1
+121   replicas: 1
+122   updatedReplicas: 1
