@@ -54,8 +54,8 @@
  54           timeoutSeconds: 1
  55         name: metrics-server
  56         ports:
- 57         - containerPort: 4443
- 58           hostPort: 4443
+ 57         - containerPort: 443
+ 58           hostPort: 443
  59           name: https
  60           protocol: TCP
  61         readinessProbe:
